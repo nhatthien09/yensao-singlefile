@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Yến Sào Premium — Cửa hàng</title>
+<meta name="description" content="Yến sào nguyên chất — Tinh chế, an toàn, giao hàng toàn quốc. Demo single-file website." />
+<meta property="og:title" content="Yến Sào Premium" />
+<meta property="og:description" content="Yến sào nguyên chất — Demo site" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1608343860921-5c3f5c8ffa69?q=80&w=1200&auto=format&fit=crop" />
+<link rel="icon" href="data:," />
+<style>
+  /* ========== Reset & Base ========== */
+  :root{
+    --primary:#b36b00;
+    --muted:#6b6b6b;
+    --card:#fff;
+    --bg:#fffdf9;
+    --radius:12px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:#111}
+  a{color:inherit}
+  .container{max-width:1100px;margin:0 auto;padding:20px}
+
+  /* ========== Header ========== */
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#ffb74d);display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+  nav{display:flex;gap:12px;align-items:center}
+  nav a{padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:600}
+  .cta{background:var(--primary);color:white;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700}
+
+  /* ========== Hero & Layout ========== */
+  .hero{display:flex;gap:18px;margin-top:16px;align-items:center}
+  .hero-left{flex:1;padding:18px;border-radius:14px;background:var(--card);box-shadow:0 10px 30px rgba(0,0,0,0.04)}
+  .hero-right{width:320px;padding:18px;border-radius:14px;background:linear-gradient(180deg,#fff 0%, #fff8f0 100%);box-shadow:0 10px 30px rgba(0,0,0,0.03)}
+
+  /* ========== Products ========== */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .search{flex:1;padding:10px;border-radius:10px;border:1px solid #eee}
+  .select{padding:10px;border-radius:10px;border:1px solid #eee}
+  .products{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px}
+  .product{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.04);display:flex;flex-direction:column}
+  .product img{width:100%;height:180px;object-fit:cover;border-radius:8px}
+  .product h4{margin:8px 0 4px}
+  .meta{display:flex;justify-content:space-between;align-items:center}
+  .price{color:var(--primary);font-weight:800}
+  .btn{background:var(--primary);color:#fff;padding:8px 10px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid #eee}
+
+  /* ========== Cart panel ========== */
+  .cart-btn{position:fixed;right:18px;bottom:18px;background:var(--primary);color:white;padding:12px;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,0.15);cursor:pointer;z-index:40}
+  .cart-panel{position:fixed;right:18px;bottom:78px;width:360px;max-height:70vh;overflow:auto;background:var(--card);padding:16px;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.12);z-index:40;display:none}
+
+  /* ========== Modal ========== */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal{background:white;border-radius:12px;max-width:900px;width:96%;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,0.3)}
+
+  /* ========== Admin ========== */
+  .admin-panel{background:#fff;padding:12px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.05);margin-top:12px}
+  .small{font-size:13px;color:var(--muted)}
+  .list{margin-top:12px}
+
+  /* ========== Footer & Responsive ========== */
+  footer{margin-top:28px;text-align:center;color:var(--muted);font-size:14px;padding:20px}
+  @media(max-width:900px){
+    .products{grid-template-columns:repeat(2,1fr)}
+    .hero{flex-direction:column}
+    .hero-right{width:100%}
+    .cart-panel{right:10px;left:10px;width:auto}
+  }
+  @media(max-width:560px){ .products{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">YS</div>
+        <div>
+          <div style="font-weight:800">Yến Sào Premium</div>
+          <div class="small">Yến sào nguyên chất — Uy tín & Chất lượng</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#" onclick="scrollToSection('products')">Sản phẩm</a>
+        <a href="#" onclick="scrollToSection('about')">Về chúng tôi</a>
+        <a href="#" id="adminLink" onclick="openAdminPrompt()">Quản trị</a>
+        <a class="cta" href="#" onclick="scrollToSection('contact')">Mua ngay</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h1>Yến sào tinh khiết — Bồi bổ sức khỏe</h1>
+        <p class="small">Demo website bán yến sào đầy đủ chức năng (single-file). Giao hàng toàn quốc — Liên hệ hotline: <strong>0987 654 321</strong></p>
+
+        <div style="margin-top:12px">
+          <div class="controls">
+            <input id="search" class="search" placeholder="Tìm sản phẩm..." oninput="renderProducts()" />
+            <select id="sort" class="select" onchange="renderProducts()">
+              <option value="new">Mới nhất</option>
+              <option value="price-asc">Giá tăng dần</option>
+              <option value="price-desc">Giá giảm dần</option>
+            </select>
+            <select id="filter" class="select" onchange="renderProducts()">
+              <option value="all">Tất cả</option>
+              <option value="y1">Yến thượng hạng</option>
+              <option value="y2">Yến huyết</option>
+              <option value="y3">Yến ngâm</option>
+            </select>
+          </div>
+
+          <div id="products" class="products" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <aside class="hero-right">
+        <div style="font-weight:800;margin-bottom:8px">Sản phẩm nổi bật</div>
+        <img id="featureImg" src="https://images.unsplash.com/photo-1608343860921-5c3f5c8ffa69?q=80&w=800&auto=format&fit=crop" alt="yen" style="width:100%;height:180px;object-fit:cover;border-radius:10px">
+        <div style="margin-top:12px">
+          <div style="font-weight:700">Yến thượng hạng (50g)</div>
+          <div class="small">Sấy khô, bảo quản chuyên nghiệp</div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="btn" onclick="addToCartById(1)">Thêm vào giỏ</button>
+            <button class="btn ghost" onclick="openAdminPrompt()">Tư vấn</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="about" style="margin-top:18px">
+      <h3>Về chúng tôi</h3>
+      <p class="small">Yến Sào Premium — mô phỏng cửa hàng yến sào chuyên nghiệp. Dùng để demo tính năng, sau này có thể kết nối backend để lưu trữ và thanh toán thực tế.</p>
+    </section>
+
+    <section id="contact" style="margin-top:18px">
+      <h3>Liên hệ & Thanh toán</h3>
+      <p class="small">Bạn có thể dùng form thanh toán để tạo đơn — để thanh toán thực tế, tích hợp Stripe/Momo cần backend.</p>
+    </section>
+
+    <footer>© 2025 Yến Sào Premium — Demo single-file. Liên hệ: 0987 654 321</footer>
+  </div>
+
+  <!-- Cart Button & Panel -->
+  <button class="cart-btn" id="cartBtn" onclick="toggleCart()">Giỏ hàng (<span id="cartCount">0</span>)</button>
+  <div class="cart-panel" id="cartPanel">
+    <h4>Giỏ hàng</h4>
+    <div id="cartList"></div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+      <div class="small">Tổng:</div>
+      <div style="font-weight:800" id="cartTotal">₫0</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn" onclick="openCheckout()">Thanh toán (Demo)</button>
+      <button class="btn ghost" onclick="clearCart()">Xoá</button>
+    </div>
+    <div style="margin-top:12px">
+      <div class="small">Bạn có thể xuất giỏ hàng ra JSON để lưu cục bộ.</div>
+      <button class="btn ghost" onclick="exportCart()">Xuất JSON</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modalContent" role="dialog" aria-modal="true"></div>
+  </div>
+
+<script>
+/* =========================
+   Single-file e-commerce app
+   - Data persisted in localStorage:
+     - 'ys_products' : array of product objects
+     - 'ys_cart' : array of {id, qty}
+     - 'ys_orders' : array of order objects
+   - Admin: username=admin password=password123
+   - Images used via external URLs
+   ========================= */
+
+/* ---------- Utilities ---------- */
+const qs = s => document.querySelector(s);
+const qsa = s => Array.from(document.querySelectorAll(s));
+const fmt = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+/* ---------- Default Data ---------- */
+const DEFAULT_PRODUCTS = [
+  {id:1, sku:'YS-50G', title:'Yến thượng hạng 50g', price:1200000, category:'y1', img:'https://images.unsplash.com/photo-1608343860921-5c3f5c8ffa69?q=80&w=800&auto=format&fit=crop', description:'Yến sào nguyên tổ, tinh chế sạch.'},
+  {id:2, sku:'YS-30H', title:'Yến huyết đặc biệt 30g', price:2500000, category:'y2', img:'https://images.unsplash.com/photo-1564758866813-8f0a1c9a6b58?q=80&w=800&auto=format&fit=crop', description:'Yến huyết tuyển chọn.'},
+  {id:3, sku:'YS-100G', title:'Yến ngâm đường phèn 100g', price:1800000, category:'y3', img:'https://images.unsplash.com/photo-1619446908768-7c1b7b9d3d1b?q=80&w=800&auto=format&fit=crop', description:'Gói tiện dụng, sẵn sàng dùng.'},
+  {id:4, sku:'YS-10S', title:'Yến sào mini 10g', price:300000, category:'y1', img:'https://images.unsplash.com/photo-1600180758894-8f2fd5ac5f7d?q=80&w=800&auto=format&fit=crop', description:'Dùng thử, tiện lợi.'}
+];
+
+/* ---------- Storage helpers ---------- */
+function storageGet(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(!raw) return fallback;
+    return JSON.parse(raw);
+  } catch(e){
+    console.error('JSON parse error', e);
+    return fallback;
+  }
+}
+function storageSet(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+/* ---------- Products ---------- */
+function getProducts(){
+  const p = storageGet('ys_products', null);
+  if(!p){
+    storageSet('ys_products', DEFAULT_PRODUCTS);
+    return DEFAULT_PRODUCTS.slice();
+  }
+  return p;
+}
+function saveProducts(arr){ storageSet('ys_products', arr); }
+
+/* ---------- Cart ---------- */
+function getCart(){ return storageGet('ys_cart', []); }
+function saveCart(c){ storageSet('ys_cart', c); updateCartUI(); }
+
+function addToCartById(id){
+  const c = getCart();
+  const found = c.find(x=>x.id===id);
+  if(found) found.qty +=1; else c.push({id, qty:1});
+  saveCart(c);
+  alert('Đã thêm vào giỏ');
+}
+
+/* ---------- Render products ---------- */
+function renderProducts(){
+  const all = getProducts();
+  const search = qs('#search').value.trim().toLowerCase();
+  const sort = qs('#sort').value;
+  const filter = qs('#filter').value;
+
+  let list = all.filter(p=>{
+    if(filter !== 'all' && p.category !== filter) return false;
+    if(!search) return true;
+    return (p.title + ' ' + (p.description||'') + ' ' + (p.sku||'')).toLowerCase().includes(search);
+  });
+
+  if(sort === 'price-asc') list.sort((a,b)=>a.price-b.price);
+  else if(sort === 'price-desc') list.sort((a,b)=>b.price-a.price);
+  else list.sort((a,b)=>b.id - a.id); // new first
+
+  const container = qs('#products');
+  if(list.length===0){ container.innerHTML = '<div class="small">Không tìm thấy sản phẩm.</div>'; return; }
+
+  container.innerHTML = list.map(p=>`
+    <div class="product" data-id="${p.id}">
+      <img src="${p.img}" alt="${escapeHtml(p.title)}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'"/>
+      <h4>${escapeHtml(p.title)}</h4>
+      <div class="small">${escapeHtml(p.sku || '')}</div>
+      <div class="meta" style="margin-top:8px">
+        <div class="price">₫${fmt(p.price)}</div>
+        <div>
+          <button class="btn ghost" onclick="viewDetail(${p.id})">Chi tiết</button>
+          <button class="btn" onclick="addToCartById(${p.id})">Thêm</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- Modal / Detail ---------- */
+function viewDetail(id){
+  const p = getProducts().find(x=>x.id===id);
+  if(!p) return alert('Không tìm thấy sản phẩm');
+  showModal(`
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <img src="${p.img}" alt="${escapeHtml(p.title)}" style="width:100%;height:320px;object-fit:cover;border-radius:10px" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'"/>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <h2>${escapeHtml(p.title)}</h2>
+        <div class="small">SKU: ${escapeHtml(p.sku||'')}</div>
+        <div style="font-weight:800;margin:8px 0">₫${fmt(p.price)}</div>
+        <p>${escapeHtml(p.description||'')}</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn" onclick="addToCartById(${p.id}); closeModal()">Thêm vào giỏ</button>
+          <button class="btn ghost" onclick="closeModal()">Đóng</button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+/* ---------- Modal helpers ---------- */
+function showModal(html){
+  qs('#modalContent').innerHTML = html;
+  qs('#overlay').style.display = 'flex';
+}
+function closeModal(){
+  qs('#overlay').style.display = 'none';
+  qs('#modalContent').innerHTML = '';
+}
+qs('#overlay').addEventListener('click', (e)=>{ if(e.target === qs('#overlay')) closeModal(); });
+
+/* ---------- Cart UI ---------- */
+function updateCartUI(){
+  const cart = getCart();
+  let total = 0; let count=0;
+  const listEl = qs('#cartList');
+  listEl.innerHTML = '';
+  const products = getProducts();
+  cart.forEach(it=>{
+    const prod = products.find(p=>p.id===it.id);
+    if(!prod) return;
+    total += prod.price * it.qty; count += it.qty;
+    const div = document.createElement('div');
+    div.style.display='flex'; div.style.gap='8px'; div.style.alignItems='center'; div.style.marginBottom='10px';
+    div.innerHTML = `
+      <img src="${prod.img}" style="width:64px;height:48px;object-fit:cover;border-radius:6px" />
+      <div style="flex:1">
+        <div style="font-weight:700">${escapeHtml(prod.title)}</div>
+        <div class="small">₫${fmt(prod.price)} x ${it.qty}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn ghost" style="padding:6px 8px" onclick="changeQty(${it.id}, -1)">-</button>
+        <button class="btn" style="padding:6px 8px" onclick="changeQty(${it.id}, 1)">+</button>
+      </div>
+    `;
+    listEl.appendChild(div);
+  });
+  qs('#cartCount').innerText = count;
+  qs('#cartTotal').innerText = '₫' + fmt(total);
+}
+function changeQty(id, delta){
+  const cart = getCart();
+  const item = cart.find(x=>x.id===id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){ const idx=cart.findIndex(x=>x.id===id); cart.splice(idx,1); }
+  saveCart(cart);
+}
+function clearCart(){ localStorage.removeItem('ys_cart'); updateCartUI(); alert('Đã xoá giỏ hàng'); }
+function toggleCart(){ qs('#cartPanel').style.display = qs('#cartPanel').style.display === 'none' ? 'block' : 'none'; }
+function exportCart(){
+  const cart = getCart();
+  const data = JSON.stringify(cart, null, 2);
+  downloadFile('cart.json', data, 'application/json');
+}
+
+/* ---------- Checkout & Orders ---------- */
+function openCheckout(){
+  const cart = getCart();
+  if(cart.length===0) return alert('Giỏ hàng rỗng');
+  showModal(`
+    <h3>Thanh toán - Thông tin khách hàng</h3>
+    <form id="checkoutForm">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <input name="customer_name" placeholder="Họ và tên" required style="padding:8px;border-radius:6px;border:1px solid #ddd" />
+        <input name="phone" placeholder="Số điện thoại" required style="padding:8px;border-radius:6px;border:1px solid #ddd" />
+      </div>
+      <input name="email" placeholder="Email (tuỳ chọn)" style="margin-top:8px;padding:8px;border-radius:6px;border:1px solid #ddd" />
+      <input name="address" placeholder="Địa chỉ giao hàng" required style="margin-top:8px;padding:8px;border-radius:6px;border:1px solid #ddd" />
+      <textarea name="note" placeholder="Ghi chú" style="margin-top:8px;padding:8px;border-radius:6px;border:1px solid #ddd"></textarea>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" type="submit">Thanh toán (Demo)</button>
+        <button class="btn ghost" type="button" onclick="closeModal()">Hủy</button>
+      </div>
+    </form>
+  `);
+  qs('#checkoutForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const order = {
+      id: Date.now(),
+      customer_name: fd.get('customer_name'),
+      phone: fd.get('phone'),
+      email: fd.get('email'),
+      address: fd.get('address'),
+      note: fd.get('note'),
+      items: getCart(),
+      total: calculateCartTotal(),
+      status: 'new',
+      created_at: new Date().toISOString()
+    };
+    const orders = storageGet('ys_orders', []);
+    orders.unshift(order);
+    storageSet('ys_orders', orders);
+    clearCart();
+    closeModal();
+    alert('Đặt hàng thành công (Demo). Mã đơn: ' + order.id + '. Đơn nằm ở Admin → Orders.');
+  });
+}
+function calculateCartTotal(){
+  const cart = getCart();
+  const prod = getProducts();
+  return cart.reduce((s,it)=>{
+    const p = prod.find(x=>x.id===it.id);
+    return s + (p ? p.price * it.qty : 0);
+  }, 0);
+}
+
+/* ---------- Orders export helpers ---------- */
+function downloadFile(filename, content, mime='text/plain'){
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
+}
+function ordersToCSV(arr){
+  const rows = [['id','customer_name','phone','email','address','total','status','created_at','items_json']];
+  arr.forEach(o=>{
+    rows.push([o.id, o.customer_name, o.phone, o.email, o.address, o.total, o.status, o.created_at, JSON.stringify(o.items)]);
+  });
+  return rows.map(r => r.map(cell => `"${(''+cell).replace(/"/g,'""')}"`).join(',')).join('\\n');
+}
+
+/* ---------- Admin (single-file password prompt) ---------- */
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'password123'; // default per your request
+
+function openAdminPrompt(){
+  const pwd = prompt('Nhập mật khẩu admin: (username=admin)\\nMặc định: password123');
+  if(pwd === null) return;
+  if(pwd === ADMIN_PASS){
+    openAdminPanel();
+  } else {
+    alert('Sai mật khẩu!');
+  }
+}
+
+function openAdminPanel(){
+  const products = getProducts();
+  showModal(`
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:320px">
+        <h3>Admin Dashboard</h3>
+        <div class="admin-panel">
+          <h4>Thêm sản phẩm</h4>
+          <input id="a_title" placeholder="Tiêu đề" style="width:100%;padding:8px;margin:6px 0;border:1px solid #eee;border-radius:6px"/>
+          <input id="a_sku" placeholder="SKU" style="width:100%;padding:8px;margin:6px 0;border:1px solid #eee;border-radius:6px"/>
+          <input id="a_price" placeholder="Giá (số nguyên)" style="width:100%;padding:8px;margin:6px 0;border:1px solid #eee;border-radius:6px"/>
+          <input id="a_img" placeholder="URL ảnh" style="width:100%;padding:8px;margin:6px 0;border:1px solid #eee;border-radius:6px"/>
+          <textarea id="a_desc" placeholder="Mô tả" style="width:100%;padding:8px;margin:6px 0;border:1px solid #eee;border-radius:6px"></textarea>
+          <select id="a_cat" style="padding:8px;border-radius:6px;border:1px solid #eee">
+            <option value="y1">Yến thượng hạng</option>
+            <option value="y2">Yến huyết</option>
+            <option value="y3">Yến ngâm</option>
+          </select>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn" onclick="adminAddProduct()">Thêm</button>
+            <button class="btn ghost" onclick="adminExportProducts()">Xuất products JSON</button>
+            <button class="btn ghost" onclick="adminImportProducts()">Nhập products JSON</button>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <h4>Đơn hàng</h4>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="btn ghost" onclick="adminExportOrdersCSV()">Xuất Orders CSV</button>
+            <button class="btn ghost" onclick="adminExportOrdersJSON()">Xuất Orders JSON</button>
+            <button class="btn ghost" onclick="adminClearOrders()">Xóa Orders (test)</button>
+          </div>
+          <div id="adminOrdersList" style="max-height:260px;overflow:auto"></div>
+        </div>
+      </div>
+
+      <div style="width:360px;min-width:260px">
+        <h4>Danh sách sản phẩm</h4>
+        <div id="adminProductsList" style="max-height:640px;overflow:auto;"></div>
+        <div style="margin-top:12px"><button class="btn ghost" onclick="closeModal()">Đóng</button></div>
+      </div>
+    </div>
+  `);
+  renderAdminLists();
+}
+
+/* ---------- Admin actions ---------- */
+function adminAddProduct(){
+  const title = qs('#a_title').value.trim();
+  const sku = qs('#a_sku').value.trim();
+  const price = parseInt(qs('#a_price').value||0);
+  const img = qs('#a_img').value.trim();
+  const desc = qs('#a_desc').value.trim();
+  const cat = qs('#a_cat').value;
+  if(!title || !price){ return alert('Nhập tiêu đề & giá'); }
+  const arr = getProducts();
+  const id = (arr.reduce((m,x)=>Math.max(m,x.id),0) || 0) + 1;
+  arr.unshift({id, sku, title, price, img, description:desc, category:cat});
+  saveProducts(arr);
+  renderAdminLists();
+  renderProducts();
+  qs('#a_title').value=''; qs('#a_price').value=''; qs('#a_img').value=''; qs('#a_desc').value=''; qs('#a_sku').value='';
+  alert('Đã thêm sản phẩm');
+}
+
+function adminEditProduct(id){
+  const arr = getProducts();
+  const p = arr.find(x=>x.id===id);
+  if(!p) return alert('Không tìm thấy');
+  const title = prompt('Tiêu đề', p.title); if(title===null) return;
+  const price = prompt('Giá', p.price); if(price===null) return;
+  const img = prompt('URL ảnh', p.img); if(img===null) return;
+  const desc = prompt('Mô tả', p.description); if(desc===null) return;
+  p.title = title; p.price = parseInt(price||0); p.img = img; p.description = desc;
+  saveProducts(arr); renderAdminLists(); renderProducts();
+  alert('Đã cập nhật');
+}
+function adminDeleteProduct(id){
+  if(!confirm('Xác nhận xoá sản phẩm?')) return;
+  let arr = getProducts(); arr = arr.filter(x=>x.id!==id); saveProducts(arr); renderAdminLists(); renderProducts();
+  alert('Đã xoá');
+}
+
+function adminExportProducts(){
+  const arr = getProducts();
+  downloadFile('products.json', JSON.stringify(arr, null, 2), 'application/json');
+}
+function adminImportProducts(){
+  const data = prompt('Dán JSON products vào đây (ghi đè toàn bộ danh sách):');
+  if(!data) return;
+  try{
+    const arr = JSON.parse(data);
+    if(!Array.isArray(arr)) throw new Error('Not array');
+    saveProducts(arr);
+    renderAdminLists(); renderProducts();
+    alert('Import thành công');
+  }catch(e){ alert('Lỗi JSON: ' + e.message) }
+}
+
+/* Orders admin */
+function renderAdminLists(){
+  const arr = getProducts();
+  const container = qs('#adminProductsList');
+  container.innerHTML = arr.map(p=>`
+    <div style="background:#fff;padding:8px;border-radius:8px;margin-bottom:8px;display:flex;gap:8px;align-items:center">
+      <img src="${p.img}" style="width:64px;height:48px;object-fit:cover;border-radius:6px" />
+      <div style="flex:1">
+        <div style="font-weight:700">${escapeHtml(p.title)}</div>
+        <div class="small">₫${fmt(p.price)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn ghost" onclick="adminEditProduct(${p.id})">Sửa</button>
+        <button class="btn" onclick="adminDeleteProduct(${p.id})">Xoá</button>
+      </div>
+    </div>
+  `).join('');
+  renderAdminOrders();
+}
+
+function renderAdminOrders(){
+  const orders = storageGet('ys_orders', []);
+  const el = qs('#adminOrdersList');
+  if(orders.length===0){ el.innerHTML = '<div class="small">Chưa có đơn hàng</div>'; return; }
+  el.innerHTML = orders.map(o=>`
+    <div style="background:#fff;padding:8px;border-radius:8px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:700">#${o.id} — ${escapeHtml(o.customer_name || '')}</div>
+        <div class="small">${o.created_at.split('T')[0]}</div>
+      </div>
+      <div class="small">Tổng: ₫${fmt(o.total)} — Trạng thái: <strong>${o.status}</strong></div>
+      <div style="margin-top:6px">
+        <button class="btn ghost" onclick="adminViewOrder(${o.id})">Xem</button>
+        <button class="btn" onclick="adminChangeStatus(${o.id}, 'processing')">Đang xử lý</button>
+        <button class="btn" onclick="adminChangeStatus(${o.id}, 'shipped')">Đã giao</button>
+        <button class="btn ghost" onclick="adminChangeStatus(${o.id}, 'cancelled')">Huỷ</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function adminViewOrder(id){
+  const orders = storageGet('ys_orders', []);
+  const o = orders.find(x=>x.id===id);
+  if(!o) return alert('Không tìm thấy đơn');
+  showModal(`
+    <h3>Đơn #${o.id}</h3>
+    <div class="small">Khách: ${escapeHtml(o.customer_name)} — ${escapeHtml(o.phone)}</div>
+    <div class="small">Địa chỉ: ${escapeHtml(o.address)}</div>
+    <div style="margin-top:8px"><strong>Sản phẩm:</strong></div>
+    <div style="margin-top:6px">${(o.items||[]).map(it=>{
+      const p = getProducts().find(pp=>pp.id===it.id) || {title:'[deleted]', price:0};
+      return `<div class="small">${escapeHtml(p.title)} x ${it.qty} — ₫${fmt((p.price||0)*it.qty)}</div>`;
+    }).join('')}</div>
+    <div style="margin-top:8px">Tổng: ₫${fmt(o.total)}</div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn" onclick="adminChangeStatus(${o.id}, 'paid'); closeModal();">Đặt là Đã thanh toán</button>
+    </div>
+  `);
+}
+
+function adminChangeStatus(id, status){
+  const orders = storageGet('ys_orders', []);
+  const o = orders.find(x=>x.id===id);
+  if(!o) return alert('Không tìm thấy');
+  o.status = status;
+  storageSet('ys_orders', orders);
+  renderAdminOrders();
+  alert('Đã đổi trạng thái');
+}
+
+function adminExportOrdersCSV(){
+  const orders = storageGet('ys_orders', []);
+  if(orders.length===0) return alert('Không có đơn');
+  downloadFile('orders.csv', ordersToCSV(orders), 'text/csv');
+}
+function adminExportOrdersJSON(){
+  const orders = storageGet('ys_orders', []);
+  if(orders.length===0) return alert('Không có đơn');
+  downloadFile('orders.json', JSON.stringify(orders, null, 2), 'application/json');
+}
+function adminClearOrders(){
+  if(!confirm('Xóa toàn bộ orders?')) return;
+  localStorage.removeItem('ys_orders'); renderAdminOrders(); alert('Đã xóa orders');
+}
+
+/* ---------- Helpers ---------- */
+function escapeHtml(s){ return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ---------- Init ---------- */
+function init(){
+  renderProducts();
+  updateCartUI();
+  // ensure product store exists
+  getProducts();
+}
+init();
+
+/* ---------- Small UX: allow admin login link via header (for keyboard) ---------- */
+qs('#adminLink').addEventListener('click', (e)=>{ e.preventDefault(); openAdminPrompt(); });
+
+</script>
+</body>
+</html>
